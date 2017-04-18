@@ -1,0 +1,46 @@
+From 5c922c31b8a63a83837899bb78028470408e9ade Mon Sep 17 00:00:00 2001
+From: Lans Zhang <jia.zhang@windriver.com>
+Date: Wed, 11 Nov 2015 17:11:43 +0800
+Subject: [PATCH 02/11] Skip the error message when creating MokListRT if
+ vendor cert is empty
+
+Upstream-Status: Pending
+
+EFI_NOT_FOUND will be returned when creating MokListRT if vendor cert is
+empty. This is harmless, meaningless and skippable.
+
+Signed-off-by: Lans Zhang <jia.zhang@windriver.com>
+---
+ shim.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/shim.c b/shim.c
+index 9157ca7..364784b 100644
+--- a/shim.c
++++ b/shim.c
+@@ -2000,13 +2000,15 @@ EFI_STATUS mirror_mok_list()
+ 		FullData = Data;
+ 	}
+ 
+-	efi_status = uefi_call_wrapper(RT->SetVariable, 5, L"MokListRT",
+-				       &shim_lock_guid,
+-				       EFI_VARIABLE_BOOTSERVICE_ACCESS
+-				       | EFI_VARIABLE_RUNTIME_ACCESS,
+-				       FullDataSize, FullData);
+-	if (efi_status != EFI_SUCCESS) {
+-		perror(L"Failed to set MokListRT: %r\n", efi_status);
++	if (FullDataSize) {
++		efi_status = uefi_call_wrapper(RT->SetVariable, 5, L"MokListRT",
++					       &shim_lock_guid,
++					       EFI_VARIABLE_BOOTSERVICE_ACCESS
++					       | EFI_VARIABLE_RUNTIME_ACCESS,
++					       FullDataSize, FullData);
++		if (efi_status != EFI_SUCCESS) {
++			perror(L"Failed to set MokListRT: %r\n", efi_status);
++		}
+ 	}
+ 
+ 	return efi_status;
+-- 
+2.11.0
+

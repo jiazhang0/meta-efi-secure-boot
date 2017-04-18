@@ -1,0 +1,61 @@
+From 0def1e03517e26b9af6966204f0120d9e8082f75 Mon Sep 17 00:00:00 2001
+From: Lans Zhang <jia.zhang@windriver.com>
+Date: Mon, 14 Mar 2016 08:43:53 +0000
+Subject: [PATCH] Allow to override the pkg-config from the external
+
+Upstream-Status: Pending
+
+Signed-off-by: Lans Zhang <jia.zhang@windriver.com>
+---
+ src/Makefile      | 3 +++
+ src/efiboot.pc.in | 6 +++---
+ src/efivar.pc.in  | 6 +++---
+ 3 files changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/src/Makefile b/src/Makefile
+index 6eac858..3026f41 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -52,6 +52,9 @@ efivar-static : efivar.o libefivar.a
+ %.pc : %.pc.in
+ 	sed -e "s,@@VERSION@@,$(VERSION),g" \
+ 	    -e "s,@@LIBDIR@@,$(libdir),g" \
++	    -e "s,@@PREFIX@@,$(prefix),g" \
++	    -e "s,@@EXEC_PREFIX@@,$(exec_prefix),g" \
++	    -e "s,@@INCLUDEDIR@@,$(includedir),g" \
+ 		$< > $@
+ 
+ include/efivar/efivar.h : include/efivar/efivar-guids.h
+diff --git a/src/efiboot.pc.in b/src/efiboot.pc.in
+index e6ffc14..94cace4 100644
+--- a/src/efiboot.pc.in
++++ b/src/efiboot.pc.in
+@@ -1,7 +1,7 @@
+-prefix=/usr
+-exec_prefix=/usr
++prefix=@@PREFIX@@
++exec_prefix=@@EXEC_PREFIX@@
+ libdir=@@LIBDIR@@
+-includedir=/usr/include
++includedir=@@INCLUDEDIR@@
+ 
+ Name: efiboot
+ Description: UEFI Boot variable support
+diff --git a/src/efivar.pc.in b/src/efivar.pc.in
+index 1ea7deb..a7f9a39 100644
+--- a/src/efivar.pc.in
++++ b/src/efivar.pc.in
+@@ -1,7 +1,7 @@
+-prefix=/usr
+-exec_prefix=/usr
++prefix=@@PREFIX@@
++exec_prefix=@@EXEC_PREFIX@@
+ libdir=@@LIBDIR@@
+-includedir=/usr/include
++includedir=@@INCLUDEDIR@@
+ 
+ Name: efivar
+ Description: UEFI Variable Management
+-- 
+2.5.0
+

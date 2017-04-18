@@ -1,0 +1,45 @@
+From 1d0a06c603d27909d1ff688da8912456d9dac9bf Mon Sep 17 00:00:00 2001
+From: Lans Zhang <jia.zhang@windriver.com>
+Date: Mon, 5 Sep 2016 16:52:16 +0800
+Subject: [PATCH] efivar: fix build failure due to removing -std=gnu11
+
+Without -std=gnu11, the assignment to the union member ifr.ifr_ifrn will cause
+such a build failure:
+| linux.c: In function 'make_mac_path':
+| linux.c:850:9: error: missing braces around initializer [-Werror=missing-braces]
+|   struct ifreq ifr = { 0, };
+|          ^
+| linux.c:850:9: error: (near initialization for 'ifr.ifr_ifrn') [-Werror=missing-braces]
+
+This regression is caused by the patch
+"Allow-to-override-the-pkg-config-from-the-external.patch" in oe-core, which
+is used in order to keep the compatibility with older gcc being unable to
+recognize -std=gnu11 for native build.
+
+Signed-off-by: Lans Zhang <jia.zhang@windriver.com>
+---
+ src/linux.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/linux.c b/src/linux.c
+index 57f71f3..7dfce68 100644
+--- a/src/linux.c
++++ b/src/linux.c
+@@ -847,12 +847,13 @@ ssize_t
+ __attribute__((__visibility__ ("hidden")))
+ make_mac_path(uint8_t *buf, ssize_t size, const char * const ifname)
+ {
+-	struct ifreq ifr = { 0, };
++	struct ifreq ifr;
+ 	struct ethtool_drvinfo drvinfo = { 0, };
+ 	int fd, rc;
+ 	ssize_t ret = -1, sz, off=0;
+ 	char busname[PATH_MAX+1] = "";
+ 
++	memset(&ifr, 0, sizeof(ifr));
+ 	strncpy(ifr.ifr_name, ifname, IF_NAMESIZE);
+ 	drvinfo.cmd = ETHTOOL_GDRVINFO;
+ 	ifr.ifr_data = (caddr_t)&drvinfo;
+-- 
+1.9.1
+
