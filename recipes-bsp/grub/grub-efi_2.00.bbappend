@@ -5,7 +5,7 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/grub-efi:"
 
 EXTRA_SRC_URI = " \
-    ${@'file://efi-secure-boot.inc' if d.getVar('UEFI_SB', True) == '1' else ''} \
+    ${@'file://efi-secure-boot.inc file://password.inc' if d.getVar('UEFI_SB', True) == '1' else ''} \
 "
 
 SRC_URI += " \
@@ -28,7 +28,7 @@ SRC_URI += " \
     ${EXTRA_SRC_URI} \
 "
 
-GRUB_BUILDIN_append = " chain ${@'efivar mok2verify' if d.getVar('UEFI_SB', True) == '1' else ''}"
+GRUB_BUILDIN_append = " chain ${@'efivar mok2verify password_pbkdf2' if d.getVar('UEFI_SB', True) == '1' else ''}"
 
 # For efi_call_foo and efi_shim_exit
 CFLAGS_append = " -fno-toplevel-reorder"
@@ -86,8 +86,10 @@ do_install_append_class-target() {
     install -d "${D}${EFI_BOOT_PATH}"
     install -m 0600 "${WORKDIR}/grub-efi.cfg" "${D}${EFI_BOOT_PATH}/grub.cfg"
     install -m 0600 "$menu" "${D}${EFI_BOOT_PATH}"
-    [ x"${UEFI_SB}" = x"1" ] &&
+    [ x"${UEFI_SB}" = x"1" ] && {
         install -m 0600 "${WORKDIR}/efi-secure-boot.inc" "${D}${EFI_BOOT_PATH}"
+        install -m 0600 "${WORKDIR}/password.inc" "${D}${EFI_BOOT_PATH}"
+    }
 
     # Create the initial environment block with empty item.
     grub-editenv "${D}${EFI_BOOT_PATH}/grubenv" create
