@@ -45,7 +45,6 @@ PV = "11+git${SRCPV}"
 S = "${WORKDIR}/git"
 DEPENDS += "\
     gnu-efi nss openssl util-linux-native openssl-native nss-native \
-    sbsigntool-native \
 "
 
 EFI_ARCH_x86 = "ia32"
@@ -78,15 +77,26 @@ MSFT = "${@bb.utils.contains('DISTRO_FEATURES', 'msft', '1', '0', d)}"
 
 # Prepare the signing certificate and keys
 python do_prepare_signing_keys() {
-    shim_prepare_sb_keys(d)
+    # For UEFI_SB, shim is not built
+    if d.getVar('MOK_SB', True) != '1':
+        return
+
+    path = create_mok_vendor_dbx(d)
+
+    # Prepare shim_cert and vendor_cert.
+    dir = mok_sb_keys_dir(d)
+
+    import shutil
+
+    shutil.copyfile(dir + 'shim_cert.pem', d.getVar('S', True) + '/shim.crt')
+    pem2der(dir + 'vendor_cert.pem', d.getVar('WORKDIR', True) + '/vendor_cert.cer', d)
 
     # Replace the shim certificate with EV certificate for speeding up
     # the progress of MSFT signing.
     if "${MSFT}" == "1" and uks_signing_model(d) == "sample":
-        import shutil
         shutil.copyfile('${EV_CERT}', '${S}/shim.crt')
 }
-addtask prepare_signing_keys after do_check_user_keys before do_compile
+addtask prepare_signing_keys after do_configure before do_compile
 
 python do_sign() {
     # The pre-signed shim binary will override the one built from the
@@ -97,7 +107,10 @@ python do_sign() {
         import shutil
         shutil.copyfile(pre_signed, dst)
     else:
-        shim_sb_sign('${S}/shim${EFI_ARCH}.efi', dst, d)
+        if uks_signing_model(d) in ('sample', 'user'):
+            uefi_sb_sign('${S}/shim${EFI_ARCH}.efi', dst, d)
+        elif uks_signing_model(d) == 'edss':
+            edss_sign_efi_image('${S}/shim${EFI_ARCH}.efi', dst, d)
 
     sb_sign('${S}/mm${EFI_ARCH}.efi', '${B}/mm${EFI_ARCH}.efi.signed', d)
     sb_sign('${S}/fb${EFI_ARCH}.efi', '${B}/fb${EFI_ARCH}.efi.signed', d)
