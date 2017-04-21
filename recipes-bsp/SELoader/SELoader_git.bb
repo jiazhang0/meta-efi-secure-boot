@@ -34,7 +34,7 @@ COMPATIBLE_HOST = '(i.86|x86_64).*-linux'
 inherit deploy user-key-store
 
 S = "${WORKDIR}/git"
-DEPENDS_append = " \
+DEPENDS += " \
     gnu-efi sbsigntool-native \
 "
 

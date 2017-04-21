@@ -42,12 +42,8 @@ SRC_URI_append_x86-64 = " \
 SRCREV = "0fe4a80e9cb9f02ecbb1cebb73331011e3641ff4"
 PV = "11+git${SRCPV}"
 
-COMPATIBLE_HOST = '(i.86|x86_64).*-linux'
-
-inherit deploy user-key-store
-
 S = "${WORKDIR}/git"
-DEPENDS_append = "\
+DEPENDS += "\
     gnu-efi nss openssl util-linux-native openssl-native nss-native \
     sbsigntool-native \
 "

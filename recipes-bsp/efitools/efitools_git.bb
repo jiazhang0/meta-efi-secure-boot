@@ -17,7 +17,7 @@ COMPATIBLE_HOST = '(i.86|x86_64).*-linux'
 inherit user-key-store deploy
 
 # The generated native binaries are used during native and target build
-DEPENDS_append = " ${BPN}-native gnu-efi openssl"
+DEPENDS += "${BPN}-native gnu-efi openssl"
 
 RDEPENDS_${PN}_append = " \
     parted mtools coreutils util-linux openssl \
