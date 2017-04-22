@@ -77,14 +77,6 @@ do_install_append_class-target() {
     }
 
     [ x"${UEFI_SB}" = x"1" ] && {
-        # The linux command doesn't support secure boot. So replace
-        # it with the chainloader command.
-        sed -i 's/^\s*linux\s\+/&chainloader /g' "$menu"
-
-        # The initrd command becomes not working if the linux command
-        # is not launched.
-        sed -i '/^\s*initrd\s\+/d' "$menu"
-
         # Don't allow to load the detached initramfs if the bundled kernel used.
         [ x"${INITRAMFS_IMAGE_BUNDLE}" = x"1" ] &&
             sed -i 's/\(^\s*chainloader\s\+.*bzImage.*\)\s\+initrd=[^[:space:]]*\(.*\)/\1\2/g' "$menu"
