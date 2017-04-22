@@ -1,4 +1,4 @@
-From e81851ad234c7b48f920cc505e99aeab09cca5fa Mon Sep 17 00:00:00 2001
+From 46873e2c5514bf6460a2f0f39ad8f8feb8f18f68 Mon Sep 17 00:00:00 2001
 From: Lans Zhang <jia.zhang@windriver.com>
 Date: Thu, 16 Mar 2017 14:49:41 +0800
 Subject: [PATCH] mok2verify: support to verify non-PE file with PKCS#7
@@ -12,25 +12,29 @@ Each signed file has a .p7b PKCS#7 signature file for verification. For
 more details about signature format and singing tool, refer to
 https://github.com/jiazhang0/SELoader and https://github.com/jiazhang0/libsign
 
-If the initrd is not authenticated, just go to the failover boot to avoid a
-much worse failure.
+If either kernel or initrd is not authenticated, just go to the failover
+boot to avoid a much worse failure.
+
+If any of grub config files is not authenticated, the boot process just
+stops there.
 
 In addition, the editor, rescue and cmdline modes are protected by the
-combination of secure boot and user authentication in order to prevent from
-tampering the kernel commandline or booting unsigned kernel.
+combination of settings of secure boot and user authentication in order
+to prevent from tampering the kernel commandline or booting unsigned
+kernel.
 
 Signed-off-by: Lans Zhang <jia.zhang@windriver.com>
 ---
  grub-core/Makefile.core.def    |   6 ++
  grub-core/commands/boot.c      |  14 +++-
  grub-core/gfxmenu/gui_label.c  |  39 ++++++++--
- grub-core/lib/efi/mok2verify.c | 158 +++++++++++++++++++++++++++++++++++++++++
- grub-core/loader/i386/linux.c  |  80 +++++++++++++++++++++
- grub-core/normal/main.c        |  55 +++++++++++++-
- grub-core/normal/menu.c        |  29 +++++---
- grub-core/normal/menu_text.c   |  32 ++++++---
- include/grub/efi/mok2verify.h  |  48 +++++++++++++
- 9 files changed, 433 insertions(+), 28 deletions(-)
+ grub-core/lib/efi/mok2verify.c | 172 +++++++++++++++++++++++++++++++++++++++++
+ grub-core/loader/i386/linux.c  |  80 +++++++++++++++++++
+ grub-core/normal/main.c        |  55 ++++++++++++-
+ grub-core/normal/menu.c        |  29 +++++--
+ grub-core/normal/menu_text.c   |  32 ++++++--
+ include/grub/efi/mok2verify.h  |  48 ++++++++++++
+ 9 files changed, 447 insertions(+), 28 deletions(-)
  create mode 100644 grub-core/lib/efi/mok2verify.c
  create mode 100644 include/grub/efi/mok2verify.h
 
@@ -144,10 +148,10 @@ index 637578f..84bf7d4 100644
  	  self->text = grub_xasprintf (value, self->value);
 diff --git a/grub-core/lib/efi/mok2verify.c b/grub-core/lib/efi/mok2verify.c
 new file mode 100644
-index 0000000..1584bd4
+index 0000000..2e48ef9
 --- /dev/null
 +++ b/grub-core/lib/efi/mok2verify.c
-@@ -0,0 +1,158 @@
+@@ -0,0 +1,172 @@
 +/* mok2verify.c - MOK2 Verify Protocol support
 + *
 + * BSD 2-clause "Simplified" License
@@ -225,7 +229,21 @@ index 0000000..1584bd4
 +int
 +grub_is_secured (void)
 +{
-+  return !! grub_efi_locate_protocol (&grub_efi_mok2_verify_protoco_guid, 0);
++  grub_efi_guid_t global = GRUB_EFI_GLOBAL_VARIABLE_GUID;
++  void *efi_var;
++  grub_size_t efi_var_size = 0;
++  int secured = 0;
++
++  efi_var = grub_efi_get_variable ("SecureBoot", &global, &efi_var_size);
++  if (!efi_var)
++    return grub_error (GRUB_ERR_READ_ERROR, N_("cannot read variable"));
++
++  if (efi_var_size == 1 && *(grub_uint8_t *) efi_var == 1)
++    secured = 1;
++
++  grub_free (efi_var);
++
++  return secured;
 +}
 +
 +int
@@ -426,7 +444,7 @@ index e2425c8..5a12444 100644
  }
  
 diff --git a/grub-core/normal/main.c b/grub-core/normal/main.c
-index 13473ec..a87b0a7 100644
+index 13473ec..f11ce2a 100644
 --- a/grub-core/normal/main.c
 +++ b/grub-core/normal/main.c
 @@ -32,6 +32,9 @@
