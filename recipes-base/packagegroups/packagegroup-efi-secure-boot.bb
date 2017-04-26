@@ -15,7 +15,7 @@ pkgs = " \
     grub-efi \
     efitools \
     efibootmgr \
-    SELoader \
+    seloader \
 "
 
 RDEPENDS_${PN}_x86 = "${pkgs}"
