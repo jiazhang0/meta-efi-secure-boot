@@ -12,7 +12,7 @@ SRC_URI = "\
 "
 
 S = "${WORKDIR}/git"
-SRCREV = "eba569a8e6c33f07042758cbfa1706d7339464e1"
+SRCREV = "e19adc575c1f9d8f08b7fbc594a0887ace63f83f"
 PV = "0.3.0+git${SRCPV}"
 
 inherit autotools pkgconfig
@@ -24,3 +24,5 @@ EXTRA_OEMAKE += "\
     EFIVAR_LIBS='-L${STAGING_LIBDIR} -lefivar' \
     OPENSSL_LIBS='-L${STAGING_LIBDIR} -lssl -lcrypto' \
 "
+
+FILES_${PN} += "${datadir}/bash-completion/*"
