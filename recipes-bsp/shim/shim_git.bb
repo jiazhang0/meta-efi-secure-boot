@@ -64,7 +64,7 @@ EXTRA_OEMAKE = " \
 	CERTUTIL=${STAGING_BINDIR_NATIVE}/certutil \
 	SBSIGN=${STAGING_BINDIR_NATIVE}/sbsign \
 	AR=${AR} \
-	VENDOR_CERT_FILE=${WORKDIR}/vendor_cert.cer \
+	${@'VENDOR_CERT_FILE=${WORKDIR}/vendor_cert.cer' if d.getVar('MOK_SB', True) == '1' else ''} \
 	${@'VENDOR_DBX_FILE=${WORKDIR}/vendor_dbx.esl' if uks_signing_model(d) == 'user' else ''} \
 "
 
