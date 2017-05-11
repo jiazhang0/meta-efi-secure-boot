@@ -18,7 +18,7 @@ LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=8cdfce2a54b8b37c990425e4a8a84f66"
 SRC_URI = " \
     git://github.com/jiazhang0/libsign.git \
 "
-SRCREV = "e9d8b5b32b74fcd5ffb8d4629fc913380cfb7295"
+SRCREV = "d81d5b379fb83cdae97ced71a658828c27577874"
 PV = "0.3.2+git${SRCPV}"
 
 DEPENDS += "openssl"
