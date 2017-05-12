@@ -96,13 +96,16 @@ do_install_append_class-target() {
 }
 
 fakeroot python do_sign_class-target() {
-    dir = '${D}${EFI_BOOT_PATH}/'
+    image_dir = d.getVar('D', True)
+    efi_boot_path = d.getVar('EFI_BOOT_PATH', True)
+    grub_image = d.getVar('GRUB_IMAGE', True)
+    dir = image_dir + efi_boot_path + '/'
 
-    sb_sign(dir + '${GRUB_IMAGE}', dir + '${GRUB_IMAGE}', d)
+    sb_sign(dir + grub_image, dir + grub_image, d)
     uks_sel_sign(dir + 'grub.cfg', d)
     uks_sel_sign(dir + 'boot-menu.inc', d)
 
-    if '${UEFI_SB}' == '1':
+    if d.getVar('UEFI_SB', True) == "1":
         uks_sel_sign(dir + 'efi-secure-boot.inc', d)
         uks_sel_sign(dir + 'password.inc', d)
 }
