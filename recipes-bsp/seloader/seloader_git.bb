@@ -21,12 +21,12 @@ HOMEPAGE = "https://github.com/jiazhang0/SELoader.git"
 SECTION = "bootloaders"
 
 LICENSE = "BSD"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=8cdfce2a54b8b37c990425e4a8a84f66"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=d9bf404642f21afb4ad89f95d7bc91ee"
 PR = "r0"
 SRC_URI = " \
     git://github.com/jiazhang0/SELoader.git \
 "
-SRCREV = "1ee676ed9993d1b285f61d95c419376679fedbfd"
+SRCREV = "cfef2f018fbc8f05778981fd231619208c116495"
 PV = "0.4.5+git${SRCPV}"
 
 COMPATIBLE_HOST = '(i.86|x86_64).*-linux'

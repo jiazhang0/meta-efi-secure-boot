@@ -13,12 +13,12 @@ signing request. \
 "
 SECTION = "devel"
 LICENSE = "BSD"
-LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=8cdfce2a54b8b37c990425e4a8a84f66"
+LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=d9bf404642f21afb4ad89f95d7bc91ee"
 
 SRC_URI = " \
     git://github.com/jiazhang0/libsign.git \
 "
-SRCREV = "d81d5b379fb83cdae97ced71a658828c27577874"
+SRCREV = "dfab84b4235a36bb395bc6663e50578bb2f9edca"
 PV = "0.3.2+git${SRCPV}"
 
 DEPENDS += "openssl"
