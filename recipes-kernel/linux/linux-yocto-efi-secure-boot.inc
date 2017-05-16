@@ -91,3 +91,10 @@ do_deploy_append() {
         fi
     done
 }
+
+# Ship *.p7b files to related packages
+python do_package_prepend() {
+    for type in d.expand('${KERNEL_IMAGETYPES}').split():
+        typelower = type.lower()
+        d.appendVar('FILES_kernel-image-' + typelower, ' /boot/' + type + d.expand('-${KERNEL_VERSION_NAME}.p7b'))
+}
