@@ -34,32 +34,32 @@ EXTRA_OEMAKE_append = " \
 "
 
 python do_prepare_signing_keys() {
-    if '${UEFI_SB}' != '1':
+    if d.expand('${UEFI_SB}') != '1':
         return
 
     # Prepare PK, KEK and DB for LockDown.efi.
     if uks_signing_model(d) in ('sample', 'user'):
         dir = uefi_sb_keys_dir(d)
     else:
-        dir = '${SAMPLE_UEFI_SB_KEYS_DIR}/'
+        dir = d.expand('${SAMPLE_UEFI_SB_KEYS_DIR}/')
 
     import shutil
 
     for _ in ('PK', 'KEK', 'DB'):
-        shutil.copyfile(dir + _ + '.pem', '${S}/' + _ + '.crt')
-        shutil.copyfile(dir + _ + '.key', '${S}/' + _ + '.key')
+        shutil.copyfile(dir + _ + '.pem', d.expand('${S}/') + _ + '.crt')
+        shutil.copyfile(dir + _ + '.key', d.expand('${S}/') + _ + '.key')
 
     # Make sure LockDown.efi contains the DB and KEK from Microsoft.
     if "${@bb.utils.contains('DISTRO_FEATURES', 'msft', '1', '0', d)}" == '1':
-        shutil.copyfile('${MSFT_DB_CERT}', '${S}/DB.crt')
-        shutil.copyfile('${MSFT_KEK_CERT}', '${S}/KEK.crt')
+        shutil.copyfile(d.expand('${MSFT_DB_CERT}'), d.expand('${S}/DB.crt'))
+        shutil.copyfile(d.expand('${MSFT_KEK_CERT}'), d.expand('${S}/KEK.crt'))
 
     path = create_uefi_dbx(d)
     if path:
-        with open('${S}/DBX.crt', 'w') as f:
+        with open(d.expand('${S}/DBX.crt'), 'w') as f:
             pass
 
-        shutil.copyfile(path, '${S}/DBX.esl')
+        shutil.copyfile(path, d.expand('${S}/DBX.esl'))
 
         # Cheat the Makefile to avoid running this rule:
         # %.esl: %.crt cert-to-efi-sig-list
@@ -68,7 +68,7 @@ python do_prepare_signing_keys() {
         tm = time.strptime('2038-01-01 00:00:00', \
                            '%Y-%m-%d %H:%M:%S')
         time_stamp = time.mktime(tm)
-        os.utime('${S}/DBX.esl', (time_stamp, time_stamp))
+        os.utime(d.expand('${S}/DBX.esl'), (time_stamp, time_stamp))
 }
 addtask prepare_signing_keys after do_configure before do_compile
 

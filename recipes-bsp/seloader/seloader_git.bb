@@ -55,9 +55,9 @@ EFI_TARGET = "/boot/efi/EFI/BOOT"
 FILES_${PN} += "${EFI_TARGET}"
 
 python do_sign() {
-    sb_sign('${B}/Src/Efi/SELoader.efi', '${B}/Src/Efi/SELoader.efi.signed', d)
-    sb_sign('${B}/Bin/Hash2DxeCrypto.efi', '${B}/Bin/Hash2DxeCrypto.efi.signed', d)
-    sb_sign('${B}/Bin/Pkcs7VerifyDxe.efi', '${B}/Bin/Pkcs7VerifyDxe.efi.signed', d)
+    sb_sign(d.expand('${B}/Src/Efi/SELoader.efi'), d.expand('${B}/Src/Efi/SELoader.efi.signed'), d)
+    sb_sign(d.expand('${B}/Bin/Hash2DxeCrypto.efi'), d.expand('${B}/Bin/Hash2DxeCrypto.efi.signed'), d)
+    sb_sign(d.expand('${B}/Bin/Pkcs7VerifyDxe.efi'), d.expand('${B}/Bin/Pkcs7VerifyDxe.efi.signed'), d)
 }
 addtask sign after do_compile before do_install
 
