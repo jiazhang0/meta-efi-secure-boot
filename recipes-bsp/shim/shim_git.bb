@@ -93,27 +93,27 @@ python do_prepare_signing_keys() {
 
     # Replace the shim certificate with EV certificate for speeding up
     # the progress of MSFT signing.
-    if "${MSFT}" == "1" and uks_signing_model(d) == "sample":
-        shutil.copyfile('${EV_CERT}', '${S}/shim.crt')
+    if d.expand('${MSFT}') == "1" and uks_signing_model(d) == "sample":
+        shutil.copyfile(d.expand('${EV_CERT}'), d.expand('${S}/shim.crt'))
 }
 addtask prepare_signing_keys after do_configure before do_compile
 
 python do_sign() {
     # The pre-signed shim binary will override the one built from the
     # scratch.
-    pre_signed = '${WORKDIR}/shim${EFI_ARCH}.efi.signed'
-    dst = '${B}/shim${EFI_ARCH}.efi.signed'
-    if "${MSFT}" == "1" and os.path.exists(pre_signed):
+    pre_signed = d.expand('${WORKDIR}/shim${EFI_ARCH}.efi.signed')
+    dst = d.expand('${B}/shim${EFI_ARCH}.efi.signed')
+    if d.expand('${MSFT}') == "1" and os.path.exists(pre_signed):
         import shutil
         shutil.copyfile(pre_signed, dst)
     else:
         if uks_signing_model(d) in ('sample', 'user'):
-            uefi_sb_sign('${S}/shim${EFI_ARCH}.efi', dst, d)
+            uefi_sb_sign(d.expand('${S}/shim${EFI_ARCH}.efi'), dst, d)
         elif uks_signing_model(d) == 'edss':
-            edss_sign_efi_image('${S}/shim${EFI_ARCH}.efi', dst, d)
+            edss_sign_efi_image(d.expand('${S}/shim${EFI_ARCH}.efi'), dst, d)
 
-    sb_sign('${S}/mm${EFI_ARCH}.efi', '${B}/mm${EFI_ARCH}.efi.signed', d)
-    sb_sign('${S}/fb${EFI_ARCH}.efi', '${B}/fb${EFI_ARCH}.efi.signed', d)
+    sb_sign(d.expand('${S}/mm${EFI_ARCH}.efi'), d.expand('${B}/mm${EFI_ARCH}.efi.signed'), d)
+    sb_sign(d.expand('${S}/fb${EFI_ARCH}.efi'), d.expand('${B}/fb${EFI_ARCH}.efi.signed'), d)
 }
 addtask sign after do_compile before do_install
 
