@@ -15,7 +15,9 @@ pkgs = " \
     grub-efi \
     efitools \
     efibootmgr \
+    mokutil \
     seloader \
+    shim \
 "
 
 RDEPENDS_${PN}_x86 = "${pkgs}"
