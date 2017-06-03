@@ -27,11 +27,10 @@ SRC_URI = " \
 	file://0002-Skip-the-error-message-when-creating-MokListRT-if-ve.patch \
 	file://0003-Allow-to-override-the-path-to-openssl.patch \
 	file://0004-Fix-for-the-cross-compilation.patch \
-	file://0005-Fix-signing-failure-due-to-not-finding-certificate.patch \
+	file://0005-Fix-signing-failure-due-to-not-finding-certificate.patch;apply=0 \
 	file://0006-Prevent-from-removing-intermediate-.efi.patch \
 	file://0007-Use-sbsign-to-sign-MokManager-and-fallback.patch \
 	file://0008-Fix-the-world-build-failure-due-to-the-missing-rule-.patch \
-	file://0009-Don-t-enforce-to-use-gnu89-standard.patch \
 	file://0010-Makefile-do-not-sign-the-efi-file.patch \
 	file://0011-Update-verification_method-if-the-loaded-image-is-si.patch \
 "
@@ -39,8 +38,8 @@ SRC_URI_append_x86-64 = " \
        ${@bb.utils.contains('DISTRO_FEATURES', 'msft', 'file://shim${EFI_ARCH}.efi.signed file://LICENSE' if uks_signing_model(d) == 'sample' else '', '', d)} \
 "
 
-SRCREV = "0fe4a80e9cb9f02ecbb1cebb73331011e3641ff4"
-PV = "11+git${SRCPV}"
+SRCREV = "ea5f7e15971358b972b3a42656f316db588f5311"
+PV = "12+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 DEPENDS += "\
