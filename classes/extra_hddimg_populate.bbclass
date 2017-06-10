@@ -37,16 +37,18 @@ efi_hddimg_populate() {
         bbwarn "${DEPLOY_DIR_IMAGE}/${VM_DEFAULT_KERNEL} doesn't exist"
     fi
 
-    initramfs=${INITRAMFS_IMAGE}-${MACHINE}.cpio.gz
-    bbnote "Trying to install ${DEPLOY_DIR_IMAGE}/${initramfs} as ${DEST}/initrd"
-    if [ -e ${DEPLOY_DIR_IMAGE}/${initramfs} ]; then
-        install -m 0644 ${DEPLOY_DIR_IMAGE}/${initramfs} ${DEST}/initrd
-        install -m 0644 ${DEPLOY_DIR_IMAGE}/${initramfs}.p7b ${DEST}/initrd.p7b
+    if [ -n "${INITRAMFS_IMAGE}" ]; then
+        initramfs=${INITRAMFS_IMAGE}-${MACHINE}.cpio.gz
+        bbnote "Trying to install ${DEPLOY_DIR_IMAGE}/${initramfs} as ${DEST}/initrd"
+        if [ -e ${DEPLOY_DIR_IMAGE}/${initramfs} ]; then
+            install -m 0644 ${DEPLOY_DIR_IMAGE}/${initramfs} ${DEST}/initrd
+            install -m 0644 ${DEPLOY_DIR_IMAGE}/${initramfs}.p7b ${DEST}/initrd.p7b
 
-        # create a backup initrd for recovery boot
-        install -m 0644 ${DEPLOY_DIR_IMAGE}/${initramfs} ${DEST}/initrd_bakup
-        install -m 0644 ${DEPLOY_DIR_IMAGE}/${initramfs}.p7b ${DEST}/initrd_bakup.p7b
-    else
-        bbwarn "${DEPLOY_DIR_IMAGE}/${initramfs} doesn't exist"
+            # create a backup initrd for recovery boot
+            install -m 0644 ${DEPLOY_DIR_IMAGE}/${initramfs} ${DEST}/initrd_bakup
+            install -m 0644 ${DEPLOY_DIR_IMAGE}/${initramfs}.p7b ${DEST}/initrd_bakup.p7b
+        else
+            bbwarn "${DEPLOY_DIR_IMAGE}/${initramfs} doesn't exist"
+        fi
     fi
 }
