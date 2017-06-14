@@ -2,6 +2,10 @@
 # Copyright (C) 2015-2017 Wind River Systems, Inc.
 #
 
+# For EFI stub loader support
+KERNEL_FEATURES_append_x86 = " cfg/efi.scc"
+KERNEL_FEATURES_append_x86-64 = " cfg/efi.scc"
+
 inherit user-key-store
 
 fakeroot python do_sign() {
