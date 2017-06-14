@@ -12,7 +12,7 @@ layout of a signature format, and signlet only cares how to construct the \
 signing request. \
 "
 SECTION = "devel"
-LICENSE = "BSD"
+LICENSE = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://${S}/LICENSE;md5=d9bf404642f21afb4ad89f95d7bc91ee"
 
 SRC_URI = " \

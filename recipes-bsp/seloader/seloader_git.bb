@@ -20,7 +20,7 @@ memory buffer without knowing the file format. \
 HOMEPAGE = "https://github.com/jiazhang0/SELoader.git"
 SECTION = "bootloaders"
 
-LICENSE = "BSD"
+LICENSE = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=d9bf404642f21afb4ad89f95d7bc91ee"
 PR = "r0"
 SRC_URI = " \
