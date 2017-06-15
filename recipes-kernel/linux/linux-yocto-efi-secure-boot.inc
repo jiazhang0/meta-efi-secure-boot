@@ -30,10 +30,8 @@ fakeroot python do_sign() {
         # Prepare the unsigned kernel image for manual signing.
         shutil.copy(kernel, d.expand('${B}/') + type + '.unsigned')
 
-        sb_sign(kernel, kernel, d)
-
-        # SELoader signature is always based on the signed kernel image,
-        # allowing chainloader to kernel image.
+        # SELoader signature is always based on the unsigned kernel image,
+        # disallowing chainloader to kernel efi-stub.
         uks_sel_sign(kernel, d)
 
         shutil.copyfile(kernel, d.expand('${D}/boot/') + type + d.expand('-${KERNEL_RELEASE}'))
@@ -64,10 +62,8 @@ fakeroot python do_sign_bundled_kernel() {
         # Prepare the unsigned kernel image for manual signing.
         shutil.copy(kernel, d.expand('${B}/') + type + '.initramfs.unsigned')
 
-        sb_sign(kernel, kernel, d)
-
-        # SELoader signature is always based on the signed kernel image,
-        # allowing chainloader to kernel image.
+        # SELoader signature is always based on the unsigned kernel image,
+        # disallowing chainloader to kernel efi-stub.
         uks_sel_sign(kernel, d)
 
         shutil.copyfile(kernel, d.expand('${D}/boot/') + type + d.expand('-initramfs-${MACHINE}.bin'))
