@@ -2,9 +2,14 @@
 # Copyright (C) 2015-2017 Wind River Systems, Inc.
 #
 
-# For EFI stub loader support
-KERNEL_FEATURES_append_x86 = " cfg/efi.scc"
-KERNEL_FEATURES_append_x86-64 = " cfg/efi.scc"
+FILESEXTRAPATHS_prepend := "${THISDIR}/linux-yocto:"
+
+sccs = " \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'efi-secure-boot', \
+                         'cfg/efi-ext.scc', '', d)} \
+"
+KERNEL_FEATURES_append_x86 += "${sccs}"
+KERNEL_FEATURES_append_x86-64 += "${sccs}"
 
 inherit user-key-store
 
