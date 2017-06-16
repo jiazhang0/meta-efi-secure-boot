@@ -24,21 +24,18 @@ inherit deploy user-key-store
 SRC_URI = " \
 	git://github.com/rhinstaller/shim.git \
 	file://0001-shim-allow-to-verify-sha1-digest-for-Authenticode.patch \
-	file://0002-Skip-the-error-message-when-creating-MokListRT-if-ve.patch \
-	file://0003-Allow-to-override-the-path-to-openssl.patch \
-	file://0004-Fix-for-the-cross-compilation.patch \
 	file://0005-Fix-signing-failure-due-to-not-finding-certificate.patch;apply=0 \
 	file://0006-Prevent-from-removing-intermediate-.efi.patch \
 	file://0007-Use-sbsign-to-sign-MokManager-and-fallback.patch \
 	file://0008-Fix-the-world-build-failure-due-to-the-missing-rule-.patch \
 	file://0010-Makefile-do-not-sign-the-efi-file.patch \
-	file://0011-Update-verification_method-if-the-loaded-image-is-si.patch \
+	file://0011-Update-verification_method-if-the-loaded-image-is-si.patch;apply=0 \
 "
 SRC_URI_append_x86-64 = " \
        ${@bb.utils.contains('DISTRO_FEATURES', 'msft', 'file://shim${EFI_ARCH}.efi.signed file://LICENSE' if uks_signing_model(d) == 'sample' else '', '', d)} \
 "
 
-SRCREV = "ea5f7e15971358b972b3a42656f316db588f5311"
+SRCREV = "55c65546e46a78edbe41e88cb4ccbd2522e09625"
 PV = "12+git${SRCPV}"
 
 S = "${WORKDIR}/git"
