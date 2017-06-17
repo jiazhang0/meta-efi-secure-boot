@@ -27,7 +27,7 @@ SRC_URI = " \
     file://Add-static-keyword-for-IsValidVariableHeader.patch \
 "
 
-SRCREV = "791e4639ee837f70c8d5e1190e01dc3441d4a401"
+SRCREV = "0649468475d20d8ca5634433c4912467cef3ce93"
 PV = "1.7.0+git${SRCPV}"
 
 PARALLEL_MAKE = ""
