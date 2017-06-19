@@ -34,7 +34,7 @@ PARALLEL_MAKE = ""
 
 inherit perlnative
 
-DEPENDS_append := "\
+DEPENDS_append += "\
     help2man-native openssl-native sbsigntool-native \
     libfile-slurp-perl-native \
 "
@@ -48,8 +48,8 @@ EXTRA_OEMAKE = " \
     OPENSSL_LIB='${STAGING_LIBDIR}' \
     NM='${NM}' AR='${AR}' \
 "
-EXTRA_OEMAKE_append_x86 = " ARCH=ia32"
-EXTRA_OEMAKE_append_x86-64 = " ARCH=x86_64"
+EXTRA_OEMAKE_append_x86 += " ARCH=ia32"
+EXTRA_OEMAKE_append_x86-64 += " ARCH=x86_64"
 
 # LDFLAGS is used by LD not CC, so remove '-Wl,'
 LDFLAGS := "${@oe_filter_out('-Wl,', '${LDFLAGS}', d)}"
