@@ -13,7 +13,7 @@ will relocate and execute the binary."
 HOMEPAGE = "https://github.com/rhinstaller/shim.git"
 SECTION = "bootloaders"
 
-LICENSE = "shim"
+LICENSE = "BSD-2-Clause"
 LIC_FILES_CHKSUM = "file://COPYRIGHT;md5=b92e63892681ee4e8d27e7a7e87ef2bc"
 PR = "r0"
 
