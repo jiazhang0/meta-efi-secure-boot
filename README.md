@@ -455,6 +455,26 @@ protected by a password. In this situation, grub is unlockable.
 
 Rescue mode is always disabled as long as UEFI Secure Boot is enabled.
 
+### Work Flow For The First Boot
+- Build a project with this template
+
+- Deploy the rootfs
+
+- Boot up the target board
+
+- Enter to BIOS setup and remove the enrolled certificates
+  * It is recommended to still turn on UEFI Secure Boot option if allowed.
+
+- Launch a reboot via ctrl + alt + del
+  * Otherwise, a misleading error message about the verification failure
+  will be displayed.
+
+- Automatically boot to "Automatic Certificate Provision"
+
+- (Optional) Enter into BIOS setup to turn on UEFI Secure Boot option
+
+- Boot to the system with the protection provided by UEFI Secure Boot
+
 ### Known Issues
 - The 32-bit MOK Secure Boot is not validated. In other words, loading 32-bit
 shim, MOK manager, grub and kernel is not supported.
