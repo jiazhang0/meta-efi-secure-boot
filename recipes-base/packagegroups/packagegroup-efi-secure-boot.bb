@@ -30,3 +30,7 @@ kmods = " \
 
 RRECOMMENDS_${PN}_x86 += "${kmods}"
 RRECOMMENDS_${PN}_x86-64 += "${kmods}"
+
+# Check and deploy keys to ${DEPLOY_DIR_IMAGE}
+inherit user-key-store
+do_install[postfuncs] += "check_deploy_keys "
