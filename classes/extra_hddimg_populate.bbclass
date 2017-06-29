@@ -37,6 +37,11 @@ efi_hddimg_populate() {
         bbwarn "${DEPLOY_DIR_IMAGE}/${VM_DEFAULT_KERNEL} doesn't exist"
     fi
 
+    # allow to copy ${INITRD_IMAGE_LIVE} as initrd if ${INITRAMFS_IMAGE} was not built
+    if [ -z "${INITRAMFS_IMAGE}" ]; then
+        INITRAMFS_IMAGE=${INITRD_IMAGE_LIVE}
+    fi
+
     if [ -n "${INITRAMFS_IMAGE}" ]; then
         initramfs=${INITRAMFS_IMAGE}-${MACHINE}.cpio.gz
         bbnote "Trying to install ${DEPLOY_DIR_IMAGE}/${initramfs} as ${DEST}/initrd"
@@ -50,5 +55,12 @@ efi_hddimg_populate() {
         else
             bbwarn "${DEPLOY_DIR_IMAGE}/${initramfs} doesn't exist"
         fi
+    fi
+
+    # copy custom boot menu for hddimg:
+    #  - initrd is always needed to mount rootfs from /dev/ram0 (rootfs.img)
+    if [ -e ${DEPLOY_DIR_IMAGE}/boot-menu-hddimg.inc ]; then
+        install -m 0644 ${DEPLOY_DIR_IMAGE}/boot-menu-hddimg.inc ${DEST}${EFIDIR}/boot-menu.inc
+        install -m 0644 ${DEPLOY_DIR_IMAGE}/boot-menu-hddimg.inc.p7b ${DEST}${EFIDIR}/boot-menu.inc.p7b
     fi
 }
