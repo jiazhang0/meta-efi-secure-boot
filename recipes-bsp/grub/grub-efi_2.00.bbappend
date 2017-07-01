@@ -126,8 +126,10 @@ do_deploy_append_class-target() {
     install -m 0600 "${B}/${GRUB_IMAGE}" "${DEPLOYDIR}/efi-unsigned"
     cp -af "${D}${EFI_BOOT_PATH}/${GRUB_TARGET}-efi" "${DEPLOYDIR}/efi-unsigned"
 
-    cp -f "${WORKDIR}/boot-menu-hddimg.inc" "${DEPLOYDIR}"
-    cp -f "${WORKDIR}/boot-menu-hddimg.inc.p7b" "${DEPLOYDIR}"
+    if [ x"${UEFI_SB}" = x"1" ]; then
+        cp -f "${WORKDIR}/boot-menu-hddimg.inc" "${DEPLOYDIR}"
+        cp -f "${WORKDIR}/boot-menu-hddimg.inc.p7b" "${DEPLOYDIR}"
+    fi
 }
 
 CONFFILES_${PN} += " \
