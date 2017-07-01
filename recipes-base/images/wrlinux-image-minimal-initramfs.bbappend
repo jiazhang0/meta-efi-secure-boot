@@ -5,10 +5,12 @@
 inherit user-key-store deploy
 
 fakeroot python do_sign() {
+    if d.expand('${UEFI_SB}') != '1':
+        return
+
     initramfs_symlink = d.expand('wrlinux-image-minimal-initramfs-${MACHINE}.cpio.gz')
     initramfs = os.path.basename(os.path.realpath(initramfs_symlink))
 
-    print("initramfs: " + initramfs)
     if os.path.exists(initramfs):
         uks_sel_sign(initramfs, d)
 
