@@ -10,10 +10,10 @@ do_install[nostamp] = "1"
 fakeroot python do_sign() {
     initramfs = None
 
-    if '${INSTALL_INITRAMFS}' == '1':
-        initramfs = '${D}/boot/${INITRAMFS_IMAGE}${INITRAMFS_EXT_NAME}.cpio.gz'
-    elif '${INSTALL_BUNDLE}' == '1':
-        initramfs = '${D}/boot/${KERNEL_IMAGETYPE}-initramfs${INITRAMFS_EXT_NAME}'
+    if d.expand('${INSTALL_INITRAMFS}') == '1':
+        initramfs = d.expand('${D}/boot/${INITRAMFS_IMAGE}${INITRAMFS_EXT_NAME}.cpio.gz')
+    elif d.expand('${INSTALL_BUNDLE}') == '1':
+        initramfs = d.expand('${D}/boot/${KERNEL_IMAGETYPE}-initramfs${INITRAMFS_EXT_NAME}')
 
     if initramfs == None or not os.path.exists(initramfs):
         return

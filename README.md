@@ -125,10 +125,6 @@ The sample keys used for MOK Secure Boot are centrally placed under
   The private key corresponding to vendor_cert.pem, Same fuction as
   shim_cert.key.
 
-- vendor_dbx  
-  This directory contains any number of X509 certificate embedded in shim,
-  used to blacklist the revoked certificates.
-
 #### User Keys
 Refer to meta-signing-key/README.md for the details about how to generate/use
 the keys owned by the end user.

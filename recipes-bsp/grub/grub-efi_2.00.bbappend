@@ -23,6 +23,7 @@ SRC_URI += " \
     file://Grub-get-and-set-efi-variables.patch \
     file://grub-efi.cfg \
     file://boot-menu.inc \
+    file://boot-menu-hddimg.inc \
     file://serial-redirect-control-x-fix.patch \
     file://mok2verify-support-to-verify-non-PE-file-with-PKCS-7.patch \
     ${EXTRA_SRC_URI} \
@@ -73,13 +74,17 @@ do_install_append_class-target() {
     # IMA rules.
     [ x"${IMA}" = x"1" -a x"${@bb.utils.contains('DISTRO_FEATURES', 'encrypted-storage', '1', '0', d)}" != x"1" ] && {
         ! grep -q "ima_policy=tcb" "$menu" &&
-            sed -i 's/^\s*chainloader\s\+.*bzImage.*/& ima_policy=tcb/g' "$menu"
+            sed -i 's/^\s*linux\s\+.*bzImage.*/& ima_policy=tcb/g' "$menu"
     }
 
     [ x"${UEFI_SB}" = x"1" ] && {
         # Don't allow to load the detached initramfs if the bundled kernel used.
         [ x"${INITRAMFS_IMAGE_BUNDLE}" = x"1" ] &&
-            sed -i 's/\(^\s*chainloader\s\+.*bzImage.*\)\s\+initrd=[^[:space:]]*\(.*\)/\1\2/g' "$menu"
+            sed -i '/^\s*initrd\s\+.*initrd.*/d' "$menu"
+
+        # Don't allow to load the detached initramfs if it was not built or signed properly.
+        [ x"${INITRAMFS_IMAGE}" = x ] &&
+            sed -i '/^\s*initrd\s\+.*initrd.*/d' "$menu"
     }
 
     # Install the stacked grub configs.
@@ -104,6 +109,7 @@ fakeroot python do_sign_class-target() {
     sb_sign(dir + grub_image, dir + grub_image, d)
     uks_sel_sign(dir + 'grub.cfg', d)
     uks_sel_sign(dir + 'boot-menu.inc', d)
+    uks_sel_sign(image_dir + '/../boot-menu-hddimg.inc', d)
 
     if d.getVar('UEFI_SB', True) == "1":
         uks_sel_sign(dir + 'efi-secure-boot.inc', d)
@@ -119,6 +125,11 @@ do_deploy_append_class-target() {
 
     install -m 0600 "${B}/${GRUB_IMAGE}" "${DEPLOYDIR}/efi-unsigned"
     cp -af "${D}${EFI_BOOT_PATH}/${GRUB_TARGET}-efi" "${DEPLOYDIR}/efi-unsigned"
+
+    if [ x"${UEFI_SB}" = x"1" ]; then
+        cp -f "${WORKDIR}/boot-menu-hddimg.inc" "${DEPLOYDIR}"
+        cp -f "${WORKDIR}/boot-menu-hddimg.inc.p7b" "${DEPLOYDIR}"
+    fi
 }
 
 CONFFILES_${PN} += " \
